@@ -2,8 +2,11 @@
 #include <stdlib.h>
 
 #define debug
+#define true 1
+#define false 0
 
 typedef long long int HashCode;
+typedef unsigned int boolean;
 
 HashCode columnHash(int **matrix, int rows, int colIndex) {
     HashCode magic = 0x9e3779b1;
@@ -54,33 +57,34 @@ int ** createMatrix(int rows, int columns) {
 void enterMatrix(int **matrix, int rows, int columns) {
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
-            printf("[%d][%d]: ", i, j);
+            printf("matrix[%d][%d] = ", i, j);
             matrix[i][j] = enterInt("");
         }
     }
 }
 
-int arrayEquals(int *array, int *qrray, int size) {
-    for (int i = 0; i < size; i++){
-        if (array[i] != qrray[i]) {
-            return 0;
+void printMatrix(int **matrix, int rows, int columns) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            printf("%3d", matrix[i][j]);
         }
+        printf("\n");
     }
-    return 1;
 }
 
-int validate(int *array, int size) {
-    int count = 0;
-    for (int i = 0; i < size; i++) {
-        if (array[i]) {
-            count++;
-        }
-
-        if (count > 1) {
-            return 1;
+void inflateHashes(const HashCode *hashes, int **map, boolean *valid, int columns) {
+    for (int i = 0; i < columns; i++) {
+        map[i][i] = 1;
+        for (int j = i + 1; j < columns; j++) {
+            if (hashes[i] == hashes[j]) {
+                if (i != j) {
+                    valid[i] = valid[j] = true;
+                    printf("%d %d\n", i, j);
+                }
+                map[i][j] = map[j][i] = true;
+            }
         }
     }
-    return count > 1;
 }
 
 int main() {
@@ -90,16 +94,16 @@ int main() {
 #define R 4
 #define C 8
 
-    int rows = R;
-    int columns = C;
+    unsigned int rows = R;
+    unsigned int columns = C;
 
     int **matrix = (int**) calloc(rows, sizeof(int*));
 
     int origin[R][C] = {
-            {2,     7,      8,      5,      31,     4,      11,     6},
-            {5,     4,      8,      12,     5,      11,     11,     31},
-            {12,    11,     31,     4,     12,     7,      4,      2},
-            {31,    11,     2,      2,      2,      11,     7,      8}
+            {2,     7,      2,      5,      31,     4,      11,     12},
+            {5,     4,      31,      12,     5,      11,     11,     31},
+            {12,    11,     12,     4,     12,     7,      4,      2},
+            {31,    11,     5,      2,      2,      11,     7,      5}
     };
 
     for (int i = 0; i < rows; i++) {
@@ -110,19 +114,14 @@ int main() {
         }
     }
 #else
-    int rows = enterUnsigned("Enter number of rows: ");
-    int columns = enterUnsigned("Enter number of columns");
+    unsigned int rows = enterUnsigned("Enter number of rows: ");
+    unsigned int columns = enterUnsigned("Enter number of columns");
 
     int **matrix = createMatrix(rows, columns);
     enterMatrix(matrix, rows, columns);
 #endif
 
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < columns; j++) {
-            printf("%3d", matrix[i][j]);
-        }
-        printf("\n");
-    }
+    printMatrix(matrix, rows, columns);
 
     HashCode *hashes = (HashCode*) calloc(columns, sizeof(HashCode));
     for (int i = 0; i < columns; i++) {
@@ -131,49 +130,23 @@ int main() {
 
     int **map = createMatrix(columns, columns);
 
-    for (int i = 0; i < columns; i++) {
-        for (int j = 0; j < columns; j++) {
-            if (hashes[i] == hashes[j]) {
-                 if (i != j) printf("%d %d\n", i, j);
-                map[i][i] = map[i][j] = 1;
-//                map[index][0] = min(i, j);
-//                map[index][1] = max(i, j);
-//
-//                map = (int**) realloc(map, (++index + 1) * sizeof(int*));
-//                map[index] = (int*) calloc(2, sizeof(int));
-            }
-        }
-    }
+    boolean *valid = (boolean*) calloc(columns, sizeof(boolean));
+    boolean *visited = (boolean*) calloc(columns, sizeof(boolean));
 
-    // 0 4
-    // 0 3
+    inflateHashes(hashes, map, valid, columns);
 
     for (int i = 0; i < columns; i++) {
-        int *entry = map[i];
-        if (entry == NULL || !validate(entry, columns)) {
-            map[i] = NULL;
-            continue;
-        }
+        int isValid = !visited[i] && valid[i];
 
-        for (int j = 0; j < columns; j++) {
-            if (j != i && map[j] != NULL) {
-                if (arrayEquals(entry, map[j], columns)) {
-                    map[j] = NULL;
-                }
-            }
-        }
-
-    }
-
-
-    for (int i = 0; i < columns; i++) {
-        if (map[i] != NULL) {
+        if (isValid) {
             printf("Is similar: ");
+
             for (int j = 0; j < columns; j++) {
                 int isSimilar = map[i][j];
 
                 if (isSimilar) {
-                    printf("%2d", j);
+                    visited[j] = true;
+                    printf("%d ", j);
                 }
             }
             printf("\n");
