@@ -79,7 +79,7 @@ void inflateHashes(const HashCode *hashes, int **map, boolean *valid, int column
             if (hashes[i] == hashes[j]) {
                 if (i != j) {
                     valid[i] = valid[j] = true;
-                    printf("%d %d\n", i, j);
+                  //  printf("%d %d\n", i, j);
                 }
                 map[i][j] = map[j][i] = true;
             }
