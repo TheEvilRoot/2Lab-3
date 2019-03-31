@@ -3,9 +3,7 @@
 
 #include "CMatrixIO/matrixio.h"
 
-#define debug
 #define true 1
-#define false 0
 
 typedef long long int HashCode;
 typedef unsigned int boolean;
@@ -21,31 +19,6 @@ HashCode columnHash(int **matrix, int rows, int colIndex) {
     return hashCode;
 }
 
-unsigned int enterUnsigned(const char *message) {
-    int ret = -1;
-
-    do {
-        fflush(stdin);
-        fseek(stdin, 0, SEEK_END);
-        printf("%s", message);
-    } while (!scanf("%d", &ret) || ret < 0);
-
-    return (unsigned int) ret;
-}
-
-
-int enterInt(const char *message) {
-    int ret = 0;
-
-    do {
-        fflush(stdin);
-        fseek(stdin, 0, SEEK_END);
-        printf("%s", message);
-    } while (!scanf("%d", &ret));
-
-    return ret;
-}
-
 int ** createMatrix(int rows, int columns) {
     int **matrix = (int**) calloc(rows, sizeof(int*));
 
@@ -54,15 +27,6 @@ int ** createMatrix(int rows, int columns) {
     }
 
     return matrix;
-}
-
-void enterMatrix(int **matrix, int rows, int columns) {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < columns; j++) {
-            printf("matrix[%d][%d] = ", i, j);
-            matrix[i][j] = enterInt("");
-        }
-    }
 }
 
 void printMatrix(int **matrix, int rows, int columns) {
@@ -81,7 +45,7 @@ void inflateGraph(const HashCode *hashes, int **map, boolean *valid, int columns
             if (hashes[i] == hashes[j]) {
                 if (i != j) {
                     valid[i] = valid[j] = true;
-                  //  printf("%d %d\n", i, j);
+                  //  printf("%d %d\n", i, j); // Debug to show pairs
                 }
                 map[i][j] = map[j][i] = true;
             }
