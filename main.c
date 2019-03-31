@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "CMatrixIO/matrixio.h"
+
 #define debug
 #define true 1
 #define false 0
@@ -28,7 +30,7 @@ unsigned int enterUnsigned(const char *message) {
         printf("%s", message);
     } while (!scanf("%d", &ret) || ret < 0);
 
-    return (unsigned  int) ret;
+    return (unsigned int) ret;
 }
 
 
@@ -72,7 +74,7 @@ void printMatrix(int **matrix, int rows, int columns) {
     }
 }
 
-void inflateHashes(const HashCode *hashes, int **map, boolean *valid, int columns) {
+void inflateGraph(const HashCode *hashes, int **map, boolean *valid, int columns) {
     for (int i = 0; i < columns; i++) {
         map[i][i] = 1;
         for (int j = i + 1; j < columns; j++) {
@@ -88,38 +90,15 @@ void inflateHashes(const HashCode *hashes, int **map, boolean *valid, int column
 }
 
 int main() {
+    unsigned int rows;
+    unsigned int columns;
 
-#ifdef debug
+    int **matrix = readMatrix("E:/matrix.txt", &rows, &columns);
 
-#define R 4
-#define C 8
-
-    unsigned int rows = R;
-    unsigned int columns = C;
-
-    int **matrix = (int**) calloc(rows, sizeof(int*));
-
-    int origin[R][C] = {
-            {2,     7,      2,      5,      31,     4,      11,     12},
-            {5,     4,      31,      12,     5,      11,     11,     31},
-            {12,    11,     12,     4,     12,     7,      4,      2},
-            {31,    11,     5,      2,      2,      11,     7,      5}
-    };
-
-    for (int i = 0; i < rows; i++) {
-        matrix[i] = (int *) calloc(columns, sizeof(int));
-
-        for (int j = 0; j < columns; j++) {
-            matrix[i][j] = origin[i][j];
-        }
+    if (matrix == NULL) {
+      printf("Matrix reading error\n");
+      return 1;
     }
-#else
-    unsigned int rows = enterUnsigned("Enter number of rows: ");
-    unsigned int columns = enterUnsigned("Enter number of columns");
-
-    int **matrix = createMatrix(rows, columns);
-    enterMatrix(matrix, rows, columns);
-#endif
 
     printMatrix(matrix, rows, columns);
 
@@ -133,7 +112,7 @@ int main() {
     boolean *valid = (boolean*) calloc(columns, sizeof(boolean));
     boolean *visited = (boolean*) calloc(columns, sizeof(boolean));
 
-    inflateHashes(hashes, map, valid, columns);
+    inflateGraph(hashes, map, valid, columns);
 
     for (int i = 0; i < columns; i++) {
         int isValid = !visited[i] && valid[i];

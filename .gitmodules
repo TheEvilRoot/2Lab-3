@@ -1,0 +1,3 @@
+[submodule "CMatrixIO"]
+	path = CMatrixIO
+	url = https://github.com/TheEvilRoot/CMatrixIO
