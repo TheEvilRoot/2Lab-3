@@ -4,6 +4,7 @@
 #include "CMatrixIO/matrixio.h"
 
 #define true 1
+#define false 0
 
 typedef long long int HashCode;
 typedef unsigned int boolean;
@@ -57,7 +58,7 @@ int main() {
     unsigned int rows;
     unsigned int columns;
 
-    int **matrix = readMatrix("E:/matrix.txt", &rows, &columns);
+    int **matrix = readMatrix("matrix.txt", &rows, &columns);
 
     if (matrix == NULL) {
       printf("Matrix reading error\n");
@@ -77,13 +78,15 @@ int main() {
     boolean *visited = (boolean*) calloc(columns, sizeof(boolean));
 
     inflateGraph(hashes, map, valid, columns);
+		
+		boolean flag = false;
 
     for (int i = 0; i < columns; i++) {
         int isValid = !visited[i] && valid[i];
 
         if (isValid) {
             printf("Is similar: ");
-
+						flag = true;
             for (int j = 0; j < columns; j++) {
                 int isSimilar = map[i][j];
 
@@ -94,6 +97,10 @@ int main() {
             }
             printf("\n");
         }
+    }
+
+    if (!flag) {
+			printf("No similar columns found\n");
     }
 
     return 0;
