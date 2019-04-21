@@ -54,14 +54,43 @@ void inflateGraph(const HashCode *hashes, int **map, boolean *valid, int columns
     }
 }
 
+char* enterString(const char* message) {
+	char* str = (char*)calloc(1, sizeof(char)); // Checked
+	if (str == NULL) {
+		return NULL;
+	}
+
+	int i = 0;
+	char c;
+
+	printf("%s", message);
+
+	fflush(stdin);
+	fseek(stdin, 0, SEEK_END);
+	while ((c = getchar()) != -1) {
+		str[i++] = c;
+
+		if (c == '\n') {
+			str[i - 1] = '\0';
+			break;
+		}
+
+		if (!(str = (char*)realloc(str, sizeof(char) * (i + 1)))) {
+			break;
+		}
+	}
+
+	return str;
+}
+
 int main() {
     unsigned int rows;
     unsigned int columns;
 
-    int **matrix = readMatrix("matrix.txt", &rows, &columns);
+    int **matrix = readMatrix("C:/matrix.txt", &rows, &columns);
 
     if (matrix == NULL) {
-      printf("Matrix reading error\n");
+      enterString("Matrix reading error\nEnter any symbol to exit the program...");
       return 1;
     }
 
@@ -103,5 +132,6 @@ int main() {
 			printf("No similar columns found\n");
     }
 
+	enterString("Enter any symbol to exit the program...");
     return 0;
 }

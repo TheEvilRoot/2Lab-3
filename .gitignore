@@ -1,6 +1,6 @@
+.vs/
 .idea/
 cmake-build-debug/
-CMakeLists.txt
 run
 *.swp
 *.swo
